@@ -1,64 +1,66 @@
 'use client';
 
 import { useRef } from 'react';
-import SvgSymbols from '@/components/SvgSymbols';
-import Navbar from '@/components/Navbar';
-import VimeoHero from '@/components/VimeoHero';
-import CursorBubble from '@/components/CursorBubble';
 import TransitionScribble from '@/components/TransitionScribble';
 import { INTRO_COLORS } from '@/lib/intro-config';
 
 export default function Home() {
-    const scribbleRef = useRef(null);
+    const introRef = useRef(null);
 
-    const handleReplay = (color) => {
-        if (scribbleRef.current) {
-            scribbleRef.current.replay(color);
+    const handleReplay = (color = null) => {
+        if (introRef.current) {
+            introRef.current.replay(color);
         }
     };
 
     return (
-        <>
-            {/* SVG Symbols for buttons and icons */}
-            <SvgSymbols />
+        <main
+            style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={(e) => {
+                // Clicking anywhere on the background also replays the intro
+                if (e.target.tagName !== 'BUTTON') {
+                    handleReplay(null);
+                }
+            }}
+        >
+            {/* ── 1. The Intro Animation Component ── */}
+            <TransitionScribble ref={introRef} autoPlay={true} />
 
-            {/* Custom Interactive Cursor Blob */}
-            <CursorBubble />
+            {/* ── 2. Clean Center Controls to Replay & Test Colors ── */}
+            <div className="intro-center-stage">
+                <h1 className="intro-title">Intro Animation</h1>
+                <p className="intro-subtitle">
+                    انترو الخربشة والشعار المتحرك المستخرج من موقع Truus.
+                    يعمل تلقائياً عند فتح الموقع، أو اضغط في أي مكان لتشغيله مجدداً.
+                </p>
 
-            {/* Fullscreen Intro Animation (Runs automatically on load) */}
-            <TransitionScribble ref={scribbleRef} autoPlay={true} />
+                <div className="intro-button-group">
+                    <button
+                        className="replay-btn"
+                        onClick={() => handleReplay(null)}
+                        title="إعادة تشغيل الانترو بلون عشوائي"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                        Replay Intro ↺
+                    </button>
 
-            {/* ── Main Site Intro: Navbar + Hero Section ── */}
-            <header className="main-header">
-                <Navbar />
-                <VimeoHero />
-            </header>
-
-            {/* ── Floating Controls to Replay or Test Specific Colors ── */}
-            <aside className="intro-floating-toolbar" aria-label="Intro Controls">
-                <button
-                    className="intro-replay-btn"
-                    onClick={() => handleReplay(null)}
-                    title="Replay intro animation with random color"
-                >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                    </svg>
-                    <span>Replay Intro</span>
-                </button>
-
-                <div className="intro-color-dots">
-                    {INTRO_COLORS.map((c) => (
-                        <button
-                            key={c.name}
-                            className="intro-color-dot"
-                            style={{ backgroundColor: c.value }}
-                            title={`Play with ${c.name}`}
-                            onClick={() => handleReplay(c.value)}
-                        />
-                    ))}
+                    <div className="color-picker-row">
+                        {INTRO_COLORS.map((c) => (
+                            <button
+                                key={c.name}
+                                className="color-dot"
+                                style={{ backgroundColor: c.value }}
+                                title={c.name}
+                                onClick={() => handleReplay(c.value)}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </aside>
-        </>
+
+                <span className="click-hint">اضغط في أي مكان في الشاشة لإعادة التشغيل</span>
+            </div>
+        </main>
     );
 }

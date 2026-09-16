@@ -1,67 +1,144 @@
-/* ─── Import Original Section Styles ───────────────────────────────────────── */
-@import './styles/base.css';
-@import './styles/navbar.css';
-@import './styles/vimeo-hero.css';
-@import './styles/cursor.css';
-@import './styles/responsive.css';
-
-/* ─── Floating Controls for Testing the Intro ────────────────────────────── */
-.intro-floating-toolbar {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 10001;
-    background: rgba(17, 17, 17, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 999px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    font-family: 'Epilogue', sans-serif;
-    color: #ffffff;
-    user-select: none;
+/* ─── Fonts ─────────────────────────────────────────────────────────────────── */
+@font-face {
+    font-family: 'Epilogue';
+    src: url('/fonts/Epilogue-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
 }
 
-.intro-replay-btn {
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+    --color-green: #29725f;
+    --color-lightblue: #82a0ff;
+    --color-darkblue: #4b69f0;
+    --color-lightgreen: #e6fab9;
+    --color-orange: #f5693c;
+    --color-maroon: #a0325a;
+    --color-pink: #f0befa;
+    --bg-color: #0e0e11;
+    --color-white: #ffffff;
+    --color-black: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Epilogue', system-ui, -apple-system, sans-serif;
+    color: #ffffff;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ─── The Scribble Overlay ────────────────────────────────────────────────── */
+.transition-scribble {
+    position: fixed;
+    top: -50vh;
+    left: -50vw;
+    width: 200vw;
+    height: 200vh;
+    z-index: 9999;
+    pointer-events: none;
+    color: var(--color-maroon);
+}
+
+body.is-transitioning {
+    pointer-events: none !important;
+}
+
+/* ─── Center Display & Controls ───────────────────────────────────────────── */
+.intro-center-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    text-align: center;
+    padding: 2rem;
+    z-index: 10;
+}
+
+.intro-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+}
+
+.intro-subtitle {
+    color: #888899;
+    font-size: 1rem;
+    max-width: 480px;
+    line-height: 1.5;
+}
+
+.intro-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.replay-btn {
     background: #ffffff;
     color: #000000;
     border: none;
-    padding: 8px 16px;
+    padding: 14px 28px;
     border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: inherit;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: transform 0.2s, background-color 0.2s;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
 }
 
-.intro-replay-btn:hover {
-    transform: scale(1.05);
-    background: #e6fab9;
+.replay-btn:hover {
+    transform: scale(1.06);
+    background: #f0befa;
 }
 
-.intro-color-dots {
+.replay-btn:active {
+    transform: scale(0.98);
+}
+
+/* Color Circles */
+.color-picker-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.intro-color-dot {
-    width: 20px;
-    height: 20px;
+.color-dot {
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid transparent;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
-.intro-color-dot:hover {
+.color-dot:hover {
     transform: scale(1.25);
     border-color: #ffffff;
+}
+
+.click-hint {
+    font-size: 0.8rem;
+    color: #555566;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
