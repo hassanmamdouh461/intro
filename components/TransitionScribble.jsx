@@ -170,8 +170,17 @@ const TransitionScribble = forwardRef(function TransitionScribble(
             }, config.autoPlayDelay ?? DEFAULT_INTRO_CONFIG.autoPlayDelay);
         }
 
+        // Listen for clicks on navbar logo
+        const logoClickable = document.querySelector('.logo-truus');
+        const onLogoClick = (e) => {
+            if (e) e.preventDefault();
+            runAnimation();
+        };
+        if (logoClickable) logoClickable.addEventListener('click', onLogoClick);
+
         return () => {
             window.removeEventListener('replay-intro', handleCustomEvent);
+            if (logoClickable) logoClickable.removeEventListener('click', onLogoClick);
             if (timer) clearTimeout(timer);
             isAnimatingRef.current = false;
         };
