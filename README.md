@@ -98,6 +98,8 @@ intro/
 | `config.durationIn` | `number` | `2.0` | مدة رسم الخربشة وتغطية الشاشة (بالثواني) |
 | `config.durationOut` | `number` | `2.5` | مدة انسحاب الخربشة وكشف الموقع (بالثواني) |
 | `config.wiggleIntensity` | `number` | `6` | شدة زاوية اهتزاز الشعار بالدرجات |
+| `config.startCovered` | `boolean` | `true` | يبدأ الانترو والشاشة مغطّاة بالكامل + اللوجو ظاهر (بدون مرحلة الـ draw-in) |
+| `config.startCoveredHold` | `number` | `0.9` | ثواني الوقوف عند القمة قبل بدء الانسحاب — لا تأثير إلا مع `startCovered: true` |
 | `onComplete` | `(color) => void` | `undefined` | دالة رد نداء تُستدعى عند انتهاء الانترو |
 
 ---
