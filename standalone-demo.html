@@ -172,10 +172,23 @@
             const l = path.getTotalLength() + 10;
             const durIn = 2.0;
             const durOut = 2.4;
+            // Start the intro with the screen already fully covered + brand
+            // mark visible, then wipe away. Mirrors `startCovered: true` in
+            // lib/intro-config.js. Set to `false` to revert to the original
+            // draw-in animation.
+            const startCovered = true;
+            const coveredHold = 0.9;
+            const strokeMax = '32%';
+            const strokeStart = '8%';
 
             gsap.set(svg, { scale: 0.7, opacity: 1 });
-            gsap.set(path, { strokeDasharray: l, strokeDashoffset: l, strokeWidth: '8%', opacity: 1 });
-            gsap.set(logoContainer, { opacity: 0 });
+            gsap.set(path, {
+                strokeDasharray: l,
+                strokeDashoffset: startCovered ? 0 : l,
+                strokeWidth: startCovered ? strokeMax : strokeStart,
+                opacity: 1
+            });
+            gsap.set(logoContainer, { opacity: startCovered ? 1 : 0 });
 
             document.body.classList.add('is-transitioning');
 
@@ -189,27 +202,41 @@
                 }
             });
 
-            // 1. Draw scribble in
-            tl.to(path, { strokeDashoffset: 0, duration: durIn, ease: 'power1.inOut' }, 0);
-            tl.to(path, { strokeWidth: '32%', duration: durIn, ease: 'power2.inOut' }, 0);
+            // 1. Draw scribble in (skipped when startCovered is true — the
+            // screen is already painted over from t=0).
+            const undrawStart = startCovered ? coveredHold : durIn;
 
-            // 2. Fade in logo & start wiggle
-            tl.to(logoContainer, {
-                opacity: 1,
-                duration: durIn * 0.45,
-                ease: 'power2.out',
-                onStart: () => {
-                    gsap.to(logoInner, {
-                        rotation: 6,
-                        duration: 0.14,
-                        repeat: -1,
-                        yoyo: true,
-                        ease: 'steps(1)'
-                    });
-                }
-            }, durIn * 0.48);
+            if (!startCovered) {
+                tl.to(path, { strokeDashoffset: 0, duration: durIn, ease: 'power1.inOut' }, 0);
+                tl.to(path, { strokeWidth: strokeMax, duration: durIn, ease: 'power2.inOut' }, 0);
 
-            // 3. Fade out logo
+                // 2. Fade in logo & start wiggle halfway through draw-in
+                tl.to(logoContainer, {
+                    opacity: 1,
+                    duration: durIn * 0.45,
+                    ease: 'power2.out',
+                    onStart: () => {
+                        gsap.to(logoInner, {
+                            rotation: 6,
+                            duration: 0.14,
+                            repeat: -1,
+                            yoyo: true,
+                            ease: 'steps(1)'
+                        });
+                    }
+                }, durIn * 0.48);
+            } else {
+                // startCovered: the logo is already visible, kick off wiggle now.
+                gsap.to(logoInner, {
+                    rotation: 6,
+                    duration: 0.14,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'steps(1)'
+                });
+            }
+
+            // 3. Fade out logo as the scribble begins wiping away
             tl.to(logoContainer, {
                 opacity: 0,
                 duration: 0.25,
@@ -218,11 +245,11 @@
                     gsap.killTweensOf(logoInner);
                     gsap.set(logoInner, { rotation: 0 });
                 }
-            }, durIn + (durOut * 0.4));
+            }, undrawStart + (durOut * 0.4));
 
             // 4. Undraw scribble away
-            tl.to(path, { strokeDashoffset: -l, duration: durOut, ease: 'power2.inOut' }, durIn);
-            tl.to(path, { strokeWidth: '8%', duration: durOut, ease: 'power2.inOut' }, durIn);
+            tl.to(path, { strokeDashoffset: -l, duration: durOut, ease: 'power2.inOut' }, undrawStart);
+            tl.to(path, { strokeWidth: strokeStart, duration: durOut, ease: 'power2.inOut' }, undrawStart);
         }
 
         // Run automatically when page loads
